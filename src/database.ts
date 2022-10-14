@@ -1,18 +1,14 @@
 import dotenv from 'dotenv';
-import {Pool} from 'pg';
+import { Pool } from 'pg';
 
-dotenv.config()
+dotenv.config();
 
-const {
-    POSTGRES_HOST,
-    POSTGRES_USER,
-    POSTGRES_DB,
-} = process.env
+const { POSTGRES_HOST, POSTGRES_USER, POSTGRES_DB } = process.env;
 
-const client = new Pool ({
-    host: POSTGRES_HOST,
-    database: POSTGRES_DB,
-    user: POSTGRES_USER
+const client = new Pool({
+  host: POSTGRES_HOST,
+  database: POSTGRES_DB,
+  user: POSTGRES_USER,
 });
 
-export default client
+export default client;

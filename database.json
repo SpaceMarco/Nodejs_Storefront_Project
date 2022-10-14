@@ -1,0 +1,16 @@
+{
+  "dev": {
+    "driver": "pg",
+    "host": "127.0.0.1",
+    "database": "Storefront",
+    "user": "postgres",
+    "password": ""
+  },
+  "test": {
+    "driver": "pg",
+    "host": "127.0.0.1",
+    "database": "my_new_database",
+    "user": "postgres",
+    "password": ""
+  }
+}
