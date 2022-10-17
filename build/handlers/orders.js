@@ -39,25 +39,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var order_1 = require("../models/order");
 var store = new order_1.OrderModel();
 var index = function (_req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var articles;
+    var orders;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, store.index()];
             case 1:
-                articles = _a.sent();
-                res.json(articles);
+                orders = _a.sent();
+                res.json(orders);
                 return [2 /*return*/];
         }
     });
 }); };
 var show = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var article;
+    var order;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, store.show(req.body.id)];
             case 1:
-                article = _a.sent();
-                res.json(article);
+                order = _a.sent();
+                res.json(order);
                 return [2 /*return*/];
         }
     });
@@ -99,13 +99,6 @@ var destroy = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
-var orderRoutes = function (app) {
-    app.get('/orders', index);
-    app.get('/orders/:id', show);
-    app.post('/orders', create);
-    // add product
-    app.post('/orders/:id/products', addProduct);
-};
 // ... other methods
 var addProduct = function (_req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var orderId, productId, quantity, addedProduct, err_2;
@@ -137,5 +130,6 @@ var orders_routes = function (app) {
     app.get('/orders/:id', show);
     app.post('/orders', create);
     app.delete('/orders', destroy);
+    app.post('/orders/:id/products', addProduct);
 };
 exports.default = orders_routes;

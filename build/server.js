@@ -10,7 +10,7 @@ var orders_1 = __importDefault(require("./handlers/orders"));
 var app = (0, express_1.default)();
 // const address: string = '0.0.0.0';
 var corsOptions = {
-    origin: 'http://someotherdomain.com',
+    origin: 'http://test.com',
     optionsSuccessStatus: 200,
 };
 app.use((0, cors_1.default)(corsOptions));

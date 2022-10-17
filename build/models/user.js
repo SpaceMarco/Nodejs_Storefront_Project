@@ -39,12 +39,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OrderModel = void 0;
+exports.UserModel = void 0;
 var database_1 = __importDefault(require("../database"));
-var OrderModel = /** @class */ (function () {
-    function OrderModel() {
+var UserModel = /** @class */ (function () {
+    function UserModel() {
     }
-    OrderModel.prototype.index = function () {
+    UserModel.prototype.index = function () {
         return __awaiter(this, void 0, void 0, function () {
             var conn, sql, result, err_1;
             return __generator(this, function (_a) {
@@ -54,7 +54,7 @@ var OrderModel = /** @class */ (function () {
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
-                        sql = 'SELECT * FROM orders';
+                        sql = 'SELECT * FROM users';
                         return [4 /*yield*/, conn.query(sql)];
                     case 2:
                         result = _a.sent();
@@ -68,14 +68,14 @@ var OrderModel = /** @class */ (function () {
             });
         });
     };
-    OrderModel.prototype.show = function (id) {
+    UserModel.prototype.show = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var sql, conn, result, err_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        sql = 'SELECT * FROM orders WHERE id=($1)';
+                        sql = 'SELECT * FROM users WHERE id=($1)';
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
@@ -86,24 +86,24 @@ var OrderModel = /** @class */ (function () {
                         return [2 /*return*/, result.rows[0]];
                     case 3:
                         err_2 = _a.sent();
-                        throw new Error("Could not find order ".concat(id, ". Error: ").concat(err_2));
+                        throw new Error("Could not find users ".concat(id, ". Error: ").concat(err_2));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    OrderModel.prototype.addProduct = function (quantity, orderId, productId) {
+    UserModel.prototype.create = function (b) {
         return __awaiter(this, void 0, void 0, function () {
             var sql, conn, result, order, err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        sql = 'INSERT INTO order_products (quantity, order_id, product_id) VALUES($1, $2, $3) RETURNING *';
+                        sql = 'INSERT INTO users (name, phone) VALUES($1, $2) RETURNING *';
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
-                        return [4 /*yield*/, conn.query(sql, [quantity, orderId, productId])];
+                        return [4 /*yield*/, conn.query(sql, [b.name, b.phone])];
                     case 2:
                         result = _a.sent();
                         order = result.rows[0];
@@ -111,45 +111,20 @@ var OrderModel = /** @class */ (function () {
                         return [2 /*return*/, order];
                     case 3:
                         err_3 = _a.sent();
-                        throw new Error("Could not add product ".concat(productId, " to order ").concat(orderId, ": ").concat(err_3));
+                        throw new Error("Could not add new order ".concat(b.name, ". Error: ").concat(err_3));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    OrderModel.prototype.create = function (b) {
+    UserModel.prototype.delete = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var sql, conn, result, order, err_4;
+            var sql, conn, result, book, err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        sql = 'INSERT INTO orders (name, status, usrID) VALUES($1, $2, $3) RETURNING *';
-                        return [4 /*yield*/, database_1.default.connect()];
-                    case 1:
-                        conn = _a.sent();
-                        return [4 /*yield*/, conn.query(sql, [b.name, b.status, b.usrID])];
-                    case 2:
-                        result = _a.sent();
-                        order = result.rows[0];
-                        conn.release();
-                        return [2 /*return*/, order];
-                    case 3:
-                        err_4 = _a.sent();
-                        throw new Error("Could not add new order ".concat(b.name, ". Error: ").concat(err_4));
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    OrderModel.prototype.delete = function (id) {
-        return __awaiter(this, void 0, void 0, function () {
-            var sql, conn, result, book, err_5;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        sql = 'DELETE FROM orders WHERE id=($1)';
+                        sql = 'DELETE FROM users WHERE id=($1)';
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
@@ -160,13 +135,13 @@ var OrderModel = /** @class */ (function () {
                         conn.release();
                         return [2 /*return*/, book];
                     case 3:
-                        err_5 = _a.sent();
-                        throw new Error("Could not delete book ".concat(id, ". Error: ").concat(err_5));
+                        err_4 = _a.sent();
+                        throw new Error("Could not delete book ".concat(id, ". Error: ").concat(err_4));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    return OrderModel;
+    return UserModel;
 }());
-exports.OrderModel = OrderModel;
+exports.UserModel = UserModel;

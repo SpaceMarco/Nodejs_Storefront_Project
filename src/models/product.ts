@@ -3,10 +3,10 @@ import Client from '../database';
 export type Product = {
   id?: string;
   name: string;
-  price: string;
+  price: number;
 };
 
-export class OrderModel {
+export class ProductModel {
   async index(): Promise<Product[]> {
     try {
       const conn = await Client.connect();

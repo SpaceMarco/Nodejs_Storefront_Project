@@ -34,7 +34,6 @@ const destroy = async (req: Request, res: Response) => {
   res.json(deleted);
 };
 
-
 // ... other methods
 const addProduct = async (_req: Request, res: Response) => {
   const orderId: string = _req.params.id;

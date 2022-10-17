@@ -35,11 +35,9 @@ export class UserModel {
     }
   }
 
-
   async create(b: User): Promise<User> {
     try {
-      const sql =
-        'INSERT INTO users (name, phone) VALUES($1, $2) RETURNING *';
+      const sql = 'INSERT INTO users (name, phone) VALUES($1, $2) RETURNING *';
       // @ts-ignore
       const conn = await Client.connect();
 

@@ -36,72 +36,38 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var product_1 = require("../models/product");
-var store = new product_1.ProductModel();
-var index = function (_req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var products;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, store.index()];
-            case 1:
-                products = _a.sent();
-                res.json(products);
-                return [2 /*return*/];
-        }
-    });
-}); };
-var show = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var product;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, store.show(req.body.id)];
-            case 1:
-                product = _a.sent();
-                res.json(product);
-                return [2 /*return*/];
-        }
-    });
-}); };
-var create = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var product, newproduct, err_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                product = {
-                    name: req.body.name,
-                    price: req.body.price,
-                };
-                return [4 /*yield*/, store.create(product)];
-            case 1:
-                newproduct = _a.sent();
-                res.json(newproduct);
-                return [3 /*break*/, 3];
-            case 2:
-                err_1 = _a.sent();
-                res.status(400);
-                res.json(err_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); };
-var destroy = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var deleted;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, store.delete(req.body.id)];
-            case 1:
-                deleted = _a.sent();
-                res.json(deleted);
-                return [2 /*return*/];
-        }
-    });
-}); };
-var products_routes = function (app) {
-    app.get('/products', index);
-    app.get('/products/:id', show);
-    app.post('/products', create);
-    app.delete('/products', destroy);
+var product_1 = require("../product");
+var userStore = new product_1.ProductModel();
+var newProduct = {
+    id: '1355',
+    name: 'Milk',
+    price: 2
 };
-exports.default = products_routes;
+describe('Testing the product model', function () {
+    it('Adding a product', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, userStore.create(newProduct)];
+                case 1:
+                    res = _a.sent();
+                    expect(res.name).toEqual(newProduct.name);
+                    expect(res.price).toEqual(newProduct.price);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('Deleting a product', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, userStore.delete('1355')];
+                case 1:
+                    res = (_a.sent());
+                    expect(res.name).toEqual(newProduct.name);
+                    expect(res.price).toEqual(newProduct.price);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+});

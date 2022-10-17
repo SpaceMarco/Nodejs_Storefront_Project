@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "db-migrate --env test up && npx tsc && jasmine-ts && db-migrate db:drop test",
+    "db-test": "set NODE_ENV=test && npm run test-down && npm run test-up && npx jasmine-ts src/models/tests/ && npm run test-down",
     "jasmine": "jasmine",
     "start": "nodemon src/index.ts",
     "lint": "eslint src/**/*.ts",
@@ -29,6 +30,8 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "jasmine": "^4.4.0",
+    "jasmine-spec-reporter": "^7.0.0",
+    "jasmine-ts": "^0.4.0",
     "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
     "ts-node": "^10.9.1",
