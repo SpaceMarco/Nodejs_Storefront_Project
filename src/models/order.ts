@@ -9,8 +9,8 @@ export type Order_products = {
 export type Order = {
   id?: string;
   status: string;
-  name: string;
   usrID: string;
+  date: Date;
 };
 
 export class OrderModel {
@@ -70,18 +70,18 @@ export class OrderModel {
   async create(b: Order): Promise<Order> {
     try {
       const sql =
-        'INSERT INTO orders (name, status, usrID) VALUES($1, $2, $3) RETURNING *';
+        'INSERT INTO orders (status, user_id, order_date) VALUES($1, $2, $3) RETURNING *';
       // @ts-ignore
       const conn = await Client.connect();
 
-      const result = await conn.query(sql, [b.name, b.status, b.usrID]);
+      const result = await conn.query(sql, [b.status, b.usrID, b.date]);
 
       const order = result.rows[0];
       conn.release();
 
       return order;
     } catch (err) {
-      throw new Error(`Could not add new order ${b.name}. Error: ${err}`);
+      throw new Error(`Could not add new order ${b.date}. Error: ${err}`);
     }
   }
 

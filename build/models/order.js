@@ -124,11 +124,11 @@ var OrderModel = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        sql = 'INSERT INTO orders (name, status, usrID) VALUES($1, $2, $3) RETURNING *';
+                        sql = 'INSERT INTO orders (status, user_id, order_date) VALUES($1, $2, $3) RETURNING *';
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
-                        return [4 /*yield*/, conn.query(sql, [b.name, b.status, b.usrID])];
+                        return [4 /*yield*/, conn.query(sql, [b.status, b.usrID, b.date])];
                     case 2:
                         result = _a.sent();
                         order = result.rows[0];
@@ -136,7 +136,7 @@ var OrderModel = /** @class */ (function () {
                         return [2 /*return*/, order];
                     case 3:
                         err_4 = _a.sent();
-                        throw new Error("Could not add new order ".concat(b.name, ". Error: ").concat(err_4));
+                        throw new Error("Could not add new order ".concat(b.date, ". Error: ").concat(err_4));
                     case 4: return [2 /*return*/];
                 }
             });

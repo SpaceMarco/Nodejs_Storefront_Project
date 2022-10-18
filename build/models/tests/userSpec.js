@@ -40,7 +40,9 @@ var user_1 = require("../user");
 var userStore = new user_1.UserModel();
 var newUser = {
     id: '1255',
-    name: 'Ahmed',
+    first_name: 'Ahmed',
+    last_name: 'Mostafa',
+    password: '12345',
     phone: '01068675870',
 };
 describe('Testing the user model', function () {
@@ -51,8 +53,10 @@ describe('Testing the user model', function () {
                 case 0: return [4 /*yield*/, userStore.create(newUser)];
                 case 1:
                     res = _a.sent();
-                    expect(res.name).toEqual(newUser.name);
+                    expect(res.first_name).toEqual(newUser.first_name);
+                    expect(res.last_name).toEqual(newUser.last_name);
                     expect(res.phone).toEqual(newUser.phone);
+                    expect(res.password).toEqual(newUser.password);
                     return [2 /*return*/];
             }
         });
@@ -64,8 +68,10 @@ describe('Testing the user model', function () {
                 case 0: return [4 /*yield*/, userStore.delete('1255')];
                 case 1:
                     res = (_a.sent());
-                    expect(res.name).toEqual(newUser.name);
+                    expect(res.first_name).toEqual(newUser.first_name);
+                    expect(res.last_name).toEqual(newUser.last_name);
                     expect(res.phone).toEqual(newUser.phone);
+                    expect(res.password).toEqual(newUser.password);
                     return [2 /*return*/];
             }
         });

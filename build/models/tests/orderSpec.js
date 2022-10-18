@@ -40,9 +40,9 @@ var order_1 = require("../order");
 var productStore = new order_1.OrderModel();
 var newProduct = {
     id: '1555',
-    name: 'Milk',
-    status: 'good condition',
+    status: 'active',
     usrID: '1',
+    date: new Date('4/4/2020'),
 };
 describe('Testing the product model', function () {
     it('Adding a product', function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -52,7 +52,7 @@ describe('Testing the product model', function () {
                 case 0: return [4 /*yield*/, productStore.create(newProduct)];
                 case 1:
                     res = _a.sent();
-                    expect(res.name).toEqual(newProduct.name);
+                    expect(res.date).toEqual(newProduct.date);
                     expect(res.status).toEqual(newProduct.status);
                     return [2 /*return*/];
             }
@@ -65,7 +65,7 @@ describe('Testing the product model', function () {
                 case 0: return [4 /*yield*/, productStore.delete('1355')];
                 case 1:
                     res = (_a.sent());
-                    expect(res.name).toEqual(newProduct.name);
+                    expect(res.date).toEqual(newProduct.date);
                     expect(res.status).toEqual(newProduct.status);
                     return [2 /*return*/];
             }

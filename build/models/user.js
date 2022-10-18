@@ -41,6 +41,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserModel = void 0;
 var database_1 = __importDefault(require("../database"));
+var bcrypt_1 = __importDefault(require("bcrypt"));
+var dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+var pepper = process.env.BCRYPT_PASSWORD;
+var saltRounds = process.env.SALT_ROUNDS;
 var UserModel = /** @class */ (function () {
     function UserModel() {
     }
@@ -94,16 +99,22 @@ var UserModel = /** @class */ (function () {
     };
     UserModel.prototype.create = function (b) {
         return __awaiter(this, void 0, void 0, function () {
-            var sql, conn, result, order, err_3;
+            var sql, conn, hash, result, order, err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        sql = 'INSERT INTO users (name, phone) VALUES($1, $2) RETURNING *';
+                        sql = 'INSERT INTO users (first_name, last_name, phone, password) VALUES($1, $2, $3, $4) RETURNING *';
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
-                        return [4 /*yield*/, conn.query(sql, [b.name, b.phone])];
+                        hash = bcrypt_1.default.hashSync(b.password + pepper, parseInt(saltRounds));
+                        return [4 /*yield*/, conn.query(sql, [
+                                b.first_name,
+                                b.last_name,
+                                b.phone,
+                                hash,
+                            ])];
                     case 2:
                         result = _a.sent();
                         order = result.rows[0];
@@ -111,8 +122,33 @@ var UserModel = /** @class */ (function () {
                         return [2 /*return*/, order];
                     case 3:
                         err_3 = _a.sent();
-                        throw new Error("Could not add new order ".concat(b.name, ". Error: ").concat(err_3));
+                        throw new Error("Could not add new order ".concat(b.first_name, ". Error: ").concat(err_3));
                     case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    UserModel.prototype.authenticate_hash = function (phone, password) {
+        return __awaiter(this, void 0, void 0, function () {
+            var conn, sql, res, user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, database_1.default.connect()];
+                    case 1:
+                        conn = _a.sent();
+                        sql = 'SELECT password from users Where phone=($1)';
+                        return [4 /*yield*/, conn.query(sql, [phone])];
+                    case 2:
+                        res = _a.sent();
+                        console.log(password + pepper);
+                        if (res.rows.length) {
+                            user = res.rows[0];
+                            console.log(user);
+                            if (bcrypt_1.default.compareSync(password + pepper, user.password)) {
+                                return [2 /*return*/, user];
+                            }
+                        }
+                        return [2 /*return*/, null];
                 }
             });
         });

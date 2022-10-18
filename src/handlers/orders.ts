@@ -16,9 +16,9 @@ const show = async (req: Request, res: Response) => {
 const create = async (req: Request, res: Response) => {
   try {
     const order: Order = {
-      name: req.body.name,
       status: req.body.status,
       usrID: req.body.usrID,
+      date: req.body.date,
     };
 
     const neworder = await store.create(order);

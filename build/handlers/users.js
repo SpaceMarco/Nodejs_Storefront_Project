@@ -35,8 +35,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var user_1 = require("../models/user");
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+var dotenv_1 = __importDefault(require("dotenv"));
+var authorizer_1 = __importDefault(require("../middlewares/authorizer"));
+dotenv_1.default.config();
 var store = new user_1.UserModel();
 var index = function (_req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var users;
@@ -50,7 +57,7 @@ var index = function (_req, res) { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
-var show = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var show = function (req, res, auth) { return __awaiter(void 0, void 0, void 0, function () {
     var user;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -63,19 +70,22 @@ var show = function (req, res) { return __awaiter(void 0, void 0, void 0, functi
     });
 }); };
 var create = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, newuser, err_1;
+    var user, newuser, token, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 user = {
-                    name: req.body.name,
+                    first_name: req.body.first_name,
+                    last_name: req.body.last_name,
+                    password: req.body.password,
                     phone: req.body.phone,
                 };
                 return [4 /*yield*/, store.create(user)];
             case 1:
                 newuser = _a.sent();
-                res.json(newuser);
+                token = jsonwebtoken_1.default.sign({ user: newuser }, process.env.TOKEN_SECRET);
+                res.json(token);
                 return [3 /*break*/, 3];
             case 2:
                 err_1 = _a.sent();
@@ -100,8 +110,8 @@ var destroy = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
 }); };
 var users_routes = function (app) {
     app.get('/users', index);
-    app.get('/users/:id', show);
+    app.get('/users/:id', authorizer_1.default, show);
     app.post('/users', create);
-    app.delete('/users', destroy);
+    app.delete('/users', authorizer_1.default, destroy);
 };
 exports.default = users_routes;
