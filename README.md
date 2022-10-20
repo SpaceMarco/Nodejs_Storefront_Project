@@ -33,7 +33,7 @@ and create .env file in the root folder and put the following variables inside i
  >SALT_ROUNDS=10<br/>
  >TOKEN_SECRET=secret123!<br/>
 
-### 2. API END<br/>POINTS
+### 2. API ENDPOINTS
 #### Products
 - Index  ['/products'] - GET
 - Show (args: product_id) ['/products/:id'] - GET
@@ -61,4 +61,5 @@ and create .env file in the root folder and put the following variables inside i
 > "migrate": runs UP database migrations.<br/>
 > "test": to run the unit test on the test database enviroment.<br/>
 
-to run the server simply run: >node build/server
+to run the server simply run:<br/>
+>node build/server
