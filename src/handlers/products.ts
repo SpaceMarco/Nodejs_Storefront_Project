@@ -1,19 +1,29 @@
 import express, { Request, Response } from 'express';
 import { Product, ProductModel } from '../models/product';
+import authorization from '../middlewares/authorizer';
+import jwt from 'jsonwebtoken';
 
 const store = new ProductModel();
 
-const index = async (_req: Request, res: Response) => {
+const index = async (_req: Request, res: Response): Promise<void> => {
   const products = await store.index();
-  res.json(products);
+  var token = jwt.sign(
+    { product: products },
+    process.env.TOKEN_SECRET as string
+  );
+  res.json(token);
 };
 
-const show = async (req: Request, res: Response) => {
+const show = async (req: Request, res: Response): Promise<void> => {
   const product = await store.show(req.body.id);
-  res.json(product);
+  var token = jwt.sign(
+    { product: product },
+    process.env.TOKEN_SECRET as string
+  );
+  res.json(token);
 };
 
-const create = async (req: Request, res: Response) => {
+const create = async (req: Request, res: Response): Promise<void> => {
   try {
     const product: Product = {
       name: req.body.name,
@@ -21,22 +31,31 @@ const create = async (req: Request, res: Response) => {
     };
 
     const newproduct = await store.create(product);
-    res.json(newproduct);
+    var token = jwt.sign(
+      { user: newproduct },
+      process.env.TOKEN_SECRET as string
+    );
+
+    res.json(token);
   } catch (err) {
     res.status(400);
     res.json(err);
   }
 };
 
-const destroy = async (req: Request, res: Response) => {
+const destroy = async (req: Request, res: Response): Promise<void> => {
   const deleted = await store.delete(req.body.id);
-  res.json(deleted);
+  var token = jwt.sign(
+    { product: deleted },
+    process.env.TOKEN_SECRET as string
+  );
+  res.json(token);
 };
 
-const products_routes = (app: express.Application) => {
+const products_routes = (app: express.Application): void => {
   app.get('/products', index);
   app.get('/products/:id', show);
-  app.post('/products', create);
+  app.post('/products', authorization, create);
   app.delete('/products', destroy);
 };
 

@@ -52,50 +52,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var supertest_1 = __importDefault(require("supertest"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-var randomstring_1 = __importDefault(require("randomstring"));
 var server_1 = __importDefault(require("../../server"));
-var order_1 = require("../order");
-var user_1 = require("../user");
+var product_1 = require("../product");
 var request = (0, supertest_1.default)(server_1.default);
-var orderStore = new order_1.OrderModel();
-var userStore = new user_1.UserModel();
-var createdOrder;
-var user = {
-    first_name: 'Tarek',
-    last_name: 'Hisham',
-    phone: randomstring_1.default.generate({ length: 12, charset: 'numeric' }),
-    password: '123',
+var productStore = new product_1.ProductModel();
+var createdproduct;
+var product1 = {
+    name: 'Milk',
+    price: 5,
 };
-var order_prod = {
-    quantity: 2,
-    order_id: '5',
-    product_id: '5',
-};
-var order1 = {
-    status: 'complete',
-    usrID: '5',
-    date: new Date('4/4/2022'),
-};
-var order2 = {
-    status: 'active',
-    usrID: '5',
-    date: new Date('4/4/2022'),
+var product2 = {
+    name: 'Coat',
+    price: 15,
 };
 var jsonHeaders = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
 };
-describe('testing order model routes: ', function () {
+describe('testing product model routes: ', function () {
     beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, userStore.create(user)];
+                case 0: return [4 /*yield*/, productStore.create(product1)];
                 case 1:
-                    _a.sent();
-                    return [4 /*yield*/, orderStore.create(order1)];
-                case 2:
-                    createdOrder = (_a.sent());
-                    expect(createdOrder.status).toEqual(order1.status);
+                    createdproduct = _a.sent();
                     return [2 /*return*/];
             }
         });
@@ -104,7 +84,7 @@ describe('testing order model routes: ', function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, request.get('/orders')];
+                case 0: return [4 /*yield*/, request.get('/products')];
                 case 1:
                     res = _a.sent();
                     expect(res.status).toBe(200);
@@ -112,16 +92,16 @@ describe('testing order model routes: ', function () {
             }
         });
     }); });
-    it('testing to create orders', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('testing to create products', function () { return __awaiter(void 0, void 0, void 0, function () {
         var accessToken, res;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    accessToken = jsonwebtoken_1.default.sign({ product: createdOrder }, process.env.TOKEN_SECRET);
+                    accessToken = jsonwebtoken_1.default.sign({ product: createdproduct }, process.env.TOKEN_SECRET);
                     return [4 /*yield*/, request
-                            .post('/orders')
+                            .post('/products')
                             .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))
-                            .send(order2)];
+                            .send(product2)];
                 case 1:
                     res = _a.sent();
                     expect(res.status).toBe(200);
@@ -129,54 +109,32 @@ describe('testing order model routes: ', function () {
             }
         });
     }); });
-    it('testing to view orders from user ID', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var accessToken, res;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    accessToken = jsonwebtoken_1.default.sign({ product: order_prod }, process.env.TOKEN_SECRET);
-                    return [4 /*yield*/, server_1.default.post("/orders/:".concat(order_prod.order_id), function (req, res) {
-                            // console.log(req.body); // the posted data
-                            res
-                                .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))
-                                .send({
-                                quantity: order_prod.quantity,
-                                productId: order_prod.product_id,
-                            });
-                            expect(res.status).toBe(200);
-                        })];
-                case 1:
-                    res = _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    it('testing to add products to an order', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('testing to show products', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, server_1.default.post("/orders/:".concat(order_prod.order_id, "/products"), function (req, res) {
-                        // console.log(req.body); // the posted data
-                        res.send({
-                            quantity: order_prod.quantity,
-                            productId: order_prod.product_id,
-                        });
-                        expect(res.status).toBe(200);
-                    })];
+                case 0: return [4 /*yield*/, request.get('/products')];
                 case 1:
                     res = _a.sent();
+                    expect(res.status).toBe(200);
                     return [2 /*return*/];
             }
         });
     }); });
-    it('testing to view products with orders', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var ord_prod;
+    it('testing to delete product', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var accessToken, res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, request.get('/orders/products')];
+                case 0:
+                    accessToken = jsonwebtoken_1.default.sign({ product: createdproduct }, process.env.TOKEN_SECRET);
+                    spyOn(console, 'log').and.callThrough();
+                    return [4 /*yield*/, request
+                            .delete('/products')
+                            .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))
+                            .send({ id: createdproduct.id })];
                 case 1:
-                    ord_prod = _a.sent();
-                    expect(ord_prod.status).toBe(200);
+                    res = _a.sent();
+                    expect(res.status).toBe(200);
                     return [2 /*return*/];
             }
         });

@@ -9,6 +9,7 @@ var body_parser_1 = __importDefault(require("body-parser"));
 var orders_1 = __importDefault(require("./handlers/orders"));
 var users_1 = __importDefault(require("./handlers/users"));
 var products_1 = __importDefault(require("./handlers/products"));
+var database_1 = __importDefault(require("./database"));
 var app = (0, express_1.default)();
 // const address: string = '0.0.0.0';
 var corsOptions = {
@@ -19,7 +20,19 @@ app.use((0, cors_1.default)(corsOptions));
 app.use(body_parser_1.default.json());
 app.get('/', function (_req, res) {
     try {
-        res.send('this is the INDEX route');
+        res.send('this is the INDEX route\n');
+        database_1.default.connect(function (err, client, release) {
+            if (err) {
+                return console.error('Error acquiring client', err.stack);
+            }
+            client.query('SELECT NOW()', function (err, result) {
+                release();
+                if (err) {
+                    return console.error('Error executing query', err.stack);
+                }
+                console.log(result.rows);
+            });
+        });
     }
     catch (err) {
         res.status(400);
@@ -41,3 +54,4 @@ app.get('/test-cors', (0, cors_1.default)(corsOptions), function (req, res) {
 app.listen(3000, function () {
     console.log("starting app on http://localhost:".concat(3000));
 });
+exports.default = app;

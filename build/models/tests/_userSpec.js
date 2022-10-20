@@ -50,61 +50,48 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.token = void 0;
 var supertest_1 = __importDefault(require("supertest"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var randomstring_1 = __importDefault(require("randomstring"));
+var jwt_decode_1 = __importDefault(require("jwt-decode"));
 var server_1 = __importDefault(require("../../server"));
-var order_1 = require("../order");
 var user_1 = require("../user");
 var request = (0, supertest_1.default)(server_1.default);
-var orderStore = new order_1.OrderModel();
 var userStore = new user_1.UserModel();
-var createdOrder;
-var user = {
+var createduser;
+var user1 = {
+    first_name: 'Ali',
+    last_name: 'Omar',
+    phone: randomstring_1.default.generate({ length: 12, charset: 'numeric' }),
+    password: '123',
+};
+var user2 = {
     first_name: 'Tarek',
     last_name: 'Hisham',
     phone: randomstring_1.default.generate({ length: 12, charset: 'numeric' }),
     password: '123',
 };
-var order_prod = {
-    quantity: 2,
-    order_id: '5',
-    product_id: '5',
-};
-var order1 = {
-    status: 'complete',
-    usrID: '5',
-    date: new Date('4/4/2022'),
-};
-var order2 = {
-    status: 'active',
-    usrID: '5',
-    date: new Date('4/4/2022'),
-};
 var jsonHeaders = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
 };
-describe('testing order model routes: ', function () {
+describe('testing user model routes: ', function () {
     beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, userStore.create(user)];
+                case 0: return [4 /*yield*/, userStore.create(user1)];
                 case 1:
-                    _a.sent();
-                    return [4 /*yield*/, orderStore.create(order1)];
-                case 2:
-                    createdOrder = (_a.sent());
-                    expect(createdOrder.status).toEqual(order1.status);
+                    createduser = (_a.sent());
                     return [2 /*return*/];
             }
         });
     }); });
-    it('testing the main/index', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('testing the main/index route', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, request.get('/orders')];
+                case 0: return [4 /*yield*/, request.get('/')];
                 case 1:
                     res = _a.sent();
                     expect(res.status).toBe(200);
@@ -112,16 +99,16 @@ describe('testing order model routes: ', function () {
             }
         });
     }); });
-    it('testing to create orders', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('testing to create users', function () { return __awaiter(void 0, void 0, void 0, function () {
         var accessToken, res;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    accessToken = jsonwebtoken_1.default.sign({ product: createdOrder }, process.env.TOKEN_SECRET);
+                    accessToken = jsonwebtoken_1.default.sign({ user: createduser }, process.env.TOKEN_SECRET);
                     return [4 /*yield*/, request
-                            .post('/orders')
+                            .post('/users')
                             .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))
-                            .send(order2)];
+                            .send(user2)];
                 case 1:
                     res = _a.sent();
                     expect(res.status).toBe(200);
@@ -129,56 +116,61 @@ describe('testing order model routes: ', function () {
             }
         });
     }); });
-    it('testing to view orders from user ID', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('testing to show users', function () { return __awaiter(void 0, void 0, void 0, function () {
         var accessToken, res;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    accessToken = jsonwebtoken_1.default.sign({ product: order_prod }, process.env.TOKEN_SECRET);
-                    return [4 /*yield*/, server_1.default.post("/orders/:".concat(order_prod.order_id), function (req, res) {
-                            // console.log(req.body); // the posted data
-                            res
-                                .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))
-                                .send({
-                                quantity: order_prod.quantity,
-                                productId: order_prod.product_id,
-                            });
-                            expect(res.status).toBe(200);
-                        })];
+                    accessToken = jsonwebtoken_1.default.sign({ user: createduser }, process.env.TOKEN_SECRET);
+                    return [4 /*yield*/, request
+                            .get('/users')
+                            .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))];
                 case 1:
                     res = _a.sent();
+                    expect(res.status).toBe(200);
                     return [2 /*return*/];
             }
         });
     }); });
-    it('testing to add products to an order', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var res;
+    it('authenticate the user', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res, decodedHeader;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, server_1.default.post("/orders/:".concat(order_prod.order_id, "/products"), function (req, res) {
-                        // console.log(req.body); // the posted data
-                        res.send({
-                            quantity: order_prod.quantity,
-                            productId: order_prod.product_id,
-                        });
-                        expect(res.status).toBe(200);
-                    })];
+                case 0: return [4 /*yield*/, request
+                        .post('/authenticate')
+                        .set(jsonHeaders)
+                        .send({ phone: user1.phone, password: user1.password })];
                 case 1:
                     res = _a.sent();
+                    expect(res.status).toBe(200);
+                    exports.token = 'Bearer ' + res.body;
+                    decodedHeader = (0, jwt_decode_1.default)(exports.token);
+                    // spyOn(console, 'log').and.callThrough();
+                    // console.log(res.body);
+                    // console.log('this is it: \n', decodedHeader.first_name);
+                    expect(decodedHeader.first_name).toEqual(user1.first_name);
+                    expect(decodedHeader.last_name).toEqual(user1.last_name);
+                    expect(decodedHeader.phone).toEqual(user1.phone);
                     return [2 /*return*/];
             }
         });
     }); });
-    it('testing to view products with orders', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var ord_prod;
+    it('testing to delete user', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var accessToken, res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, request.get('/orders/products')];
+                case 0:
+                    accessToken = jsonwebtoken_1.default.sign({ user: createduser }, process.env.TOKEN_SECRET);
+                    return [4 /*yield*/, request
+                            .delete('/users')
+                            .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))
+                            .send({ id: createduser.id })];
                 case 1:
-                    ord_prod = _a.sent();
-                    expect(ord_prod.status).toBe(200);
+                    res = _a.sent();
+                    expect(res.status).toBe(200);
                     return [2 /*return*/];
             }
         });
     }); });
 });
+exports.default = exports.token;

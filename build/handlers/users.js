@@ -46,25 +46,27 @@ var authorizer_1 = __importDefault(require("../middlewares/authorizer"));
 dotenv_1.default.config();
 var store = new user_1.UserModel();
 var index = function (_req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var users;
+    var users, token;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, store.index()];
             case 1:
                 users = _a.sent();
-                res.json(users);
+                token = jsonwebtoken_1.default.sign({ user: users }, process.env.TOKEN_SECRET);
+                res.json(token);
                 return [2 /*return*/];
         }
     });
 }); };
-var show = function (req, res, auth) { return __awaiter(void 0, void 0, void 0, function () {
-    var user;
+var show = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, token;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, store.show(req.body.id)];
             case 1:
                 user = _a.sent();
-                res.json(user);
+                token = jsonwebtoken_1.default.sign({ user: user }, process.env.TOKEN_SECRET);
+                res.json(token);
                 return [2 /*return*/];
         }
     });
@@ -97,21 +99,52 @@ var create = function (req, res) { return __awaiter(void 0, void 0, void 0, func
     });
 }); };
 var destroy = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var deleted;
+    var deleted, token, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, store.delete(req.body.id)];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, store.delete(req.body.id)];
             case 1:
                 deleted = _a.sent();
-                res.json(deleted);
-                return [2 /*return*/];
+                token = jsonwebtoken_1.default.sign({ user: deleted }, process.env.TOKEN_SECRET);
+                res.json(token);
+                return [3 /*break*/, 3];
+            case 2:
+                err_2 = _a.sent();
+                res.status(400);
+                res.json(err_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+var authenticate = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, token, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, store.authenticate_hash(req.body.phone, req.body.password)];
+            case 1:
+                user = (_a.sent());
+                token = jsonwebtoken_1.default.sign(user, process.env.TOKEN_SECRET);
+                res.json(token);
+                return [3 /*break*/, 3];
+            case 2:
+                error_1 = _a.sent();
+                res.status(401);
+                res.json({ error: 'enter a correct phone and password' });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
 var users_routes = function (app) {
-    app.get('/users', index);
+    app.get('/users', authorizer_1.default, index);
+    app.post('/authenticate', authenticate);
     app.get('/users/:id', authorizer_1.default, show);
-    app.post('/users', create);
+    app.post('/users', authorizer_1.default, create);
     app.delete('/users', authorizer_1.default, destroy);
 };
 exports.default = users_routes;

@@ -68,14 +68,38 @@ var OrderModel = /** @class */ (function () {
             });
         });
     };
-    OrderModel.prototype.show = function (id) {
+    OrderModel.prototype.show_orders_prod = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var sql, conn, result, err_2;
+            var conn, sql, result, err_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        sql = 'SELECT * FROM orders WHERE id=($1)';
+                        return [4 /*yield*/, database_1.default.connect()];
+                    case 1:
+                        conn = _a.sent();
+                        sql = 'SELECT * FROM order_products';
+                        return [4 /*yield*/, conn.query(sql)];
+                    case 2:
+                        result = _a.sent();
+                        conn.release();
+                        return [2 /*return*/, result.rows];
+                    case 3:
+                        err_2 = _a.sent();
+                        throw new Error("cannot get orders ".concat(err_2));
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    OrderModel.prototype.show = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sql, conn, result, err_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        sql = 'SELECT * FROM orders WHERE id=($1) and status="active"';
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
@@ -85,8 +109,8 @@ var OrderModel = /** @class */ (function () {
                         conn.release();
                         return [2 /*return*/, result.rows[0]];
                     case 3:
-                        err_2 = _a.sent();
-                        throw new Error("Could not find order ".concat(id, ". Error: ").concat(err_2));
+                        err_3 = _a.sent();
+                        throw new Error("Could not find order ".concat(id, ". Error: ").concat(err_3));
                     case 4: return [2 /*return*/];
                 }
             });
@@ -94,7 +118,7 @@ var OrderModel = /** @class */ (function () {
     };
     OrderModel.prototype.addProduct = function (quantity, orderId, productId) {
         return __awaiter(this, void 0, void 0, function () {
-            var sql, conn, result, order, err_3;
+            var sql, conn, result, order, err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -110,8 +134,8 @@ var OrderModel = /** @class */ (function () {
                         conn.release();
                         return [2 /*return*/, order];
                     case 3:
-                        err_3 = _a.sent();
-                        throw new Error("Could not add product ".concat(productId, " to order ").concat(orderId, ": ").concat(err_3));
+                        err_4 = _a.sent();
+                        throw new Error("Could not add product ".concat(productId, " to order ").concat(orderId, ": ").concat(err_4));
                     case 4: return [2 /*return*/];
                 }
             });
@@ -119,7 +143,7 @@ var OrderModel = /** @class */ (function () {
     };
     OrderModel.prototype.create = function (b) {
         return __awaiter(this, void 0, void 0, function () {
-            var sql, conn, result, order, err_4;
+            var sql, conn, result, order, err_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -135,8 +159,8 @@ var OrderModel = /** @class */ (function () {
                         conn.release();
                         return [2 /*return*/, order];
                     case 3:
-                        err_4 = _a.sent();
-                        throw new Error("Could not add new order ".concat(b.date, ". Error: ").concat(err_4));
+                        err_5 = _a.sent();
+                        throw new Error("Could not add new order ".concat(b.date, ". Error: ").concat(err_5));
                     case 4: return [2 /*return*/];
                 }
             });
@@ -144,7 +168,7 @@ var OrderModel = /** @class */ (function () {
     };
     OrderModel.prototype.delete = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var sql, conn, result, book, err_5;
+            var sql, conn, result, book, err_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -160,8 +184,8 @@ var OrderModel = /** @class */ (function () {
                         conn.release();
                         return [2 /*return*/, book];
                     case 3:
-                        err_5 = _a.sent();
-                        throw new Error("Could not delete book ".concat(id, ". Error: ").concat(err_5));
+                        err_6 = _a.sent();
+                        throw new Error("Could not delete book ".concat(id, ". Error: ").concat(err_6));
                     case 4: return [2 /*return*/];
                 }
             });

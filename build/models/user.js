@@ -99,7 +99,7 @@ var UserModel = /** @class */ (function () {
     };
     UserModel.prototype.create = function (b) {
         return __awaiter(this, void 0, void 0, function () {
-            var sql, conn, hash, result, order, err_3;
+            var sql, conn, hash, result, user, err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -117,12 +117,12 @@ var UserModel = /** @class */ (function () {
                             ])];
                     case 2:
                         result = _a.sent();
-                        order = result.rows[0];
+                        user = result.rows[0];
                         conn.release();
-                        return [2 /*return*/, order];
+                        return [2 /*return*/, user];
                     case 3:
                         err_3 = _a.sent();
-                        throw new Error("Could not add new order ".concat(b.first_name, ". Error: ").concat(err_3));
+                        throw new Error("Could not add new user ".concat(b.first_name, ". Error: ").concat(err_3));
                     case 4: return [2 /*return*/];
                 }
             });
@@ -136,7 +136,7 @@ var UserModel = /** @class */ (function () {
                     case 0: return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
-                        sql = 'SELECT password from users Where phone=($1)';
+                        sql = 'SELECT * from users Where phone=($1)';
                         return [4 /*yield*/, conn.query(sql, [phone])];
                     case 2:
                         res = _a.sent();
