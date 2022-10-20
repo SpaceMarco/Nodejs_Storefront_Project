@@ -60,3 +60,5 @@ and create .env file in the root folder and put the following variables inside i
 > "build": builds the project form typescript.<br/>
 > "migrate": runs UP database migrations.<br/>
 > "test": to run the unit test on the test database enviroment.<br/>
+
+to run the server simply run: >node build/server
