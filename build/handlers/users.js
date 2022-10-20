@@ -144,7 +144,7 @@ var users_routes = function (app) {
     app.get('/users', authorizer_1.default, index);
     app.post('/authenticate', authenticate);
     app.get('/users/:id', authorizer_1.default, show);
-    app.post('/users', authorizer_1.default, create);
+    app.post('/users', create);
     app.delete('/users', authorizer_1.default, destroy);
 };
 exports.default = users_routes;
