@@ -44,7 +44,7 @@ and create .env file in the root folder and put the following variables inside i
 #### Users
 - Index ['/users'] [token required] - GET
 - Show (args: user_id) ['/users/:id'] [token required] - GET
-- Create (args: User) ['/users'] [token required] - POST
+- Create (args: User) ['/users'] - POST
 - Delete (args: user_id) ['/users'] [token required] - DELETE
 - Authenticate (args: phone, password) ['/authenticate'] [token required] - POST
 

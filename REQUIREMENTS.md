@@ -13,7 +13,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 #### Users
 - Index ['/users'] [token required] - GET
 - Show (args: user_id) ['/users/:id'] [token required] - GET
-- Create (args: User) ['/users'] [token required] - POST
+- Create (args: User) ['/users'] - POST
 - Delete (args: user_id) ['/users'] [token required] - DELETE
 - Authenticate (args: phone, password) ['/authenticate'] [token required] - POST
 
