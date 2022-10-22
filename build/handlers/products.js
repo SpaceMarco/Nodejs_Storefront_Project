@@ -129,6 +129,6 @@ var products_routes = function (app) {
     app.get('/products', index);
     app.get('/products/:id', show);
     app.post('/products', authorizer_1.default, create);
-    app.delete('/products', destroy);
+    app.delete('/products', authorizer_1.default, destroy);
 };
 exports.default = products_routes;

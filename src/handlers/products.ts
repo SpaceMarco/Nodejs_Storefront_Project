@@ -68,7 +68,7 @@ const products_routes = (app: express.Application): void => {
   app.get('/products', index);
   app.get('/products/:id', show);
   app.post('/products', authorization, create);
-  app.delete('/products', destroy);
+  app.delete('/products', authorization , destroy);
 };
 
 export default products_routes;
