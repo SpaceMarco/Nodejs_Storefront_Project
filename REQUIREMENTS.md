@@ -66,5 +66,6 @@ https://localhost:3000
 | product_id  | bigInt REFERENCES products(id)  |
 
 ## Database schema
-![Untitled Diagram (2)](https://user-images.githubusercontent.com/60396165/197323866-ce9b630e-9def-48dd-8d45-f81964bbb583.jpg)
+
+![Untitled Diagram (3)](https://user-images.githubusercontent.com/60396165/197324258-802088ab-038c-4563-92f3-aa90015290c6.jpg)
 
