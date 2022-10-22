@@ -6,21 +6,29 @@ import jwt from 'jsonwebtoken';
 const store = new ProductModel();
 
 const index = async (_req: Request, res: Response): Promise<void> => {
-  const products = await store.index();
-  var token = jwt.sign(
-    { product: products },
-    process.env.TOKEN_SECRET as string
-  );
-  res.json(token);
+  try {
+    const products = await store.index();
+    var token = jwt.sign(
+      { product: products },
+      process.env.TOKEN_SECRET as string
+    );
+    res.json(token);
+  } catch (err) {
+    throw err;
+  }
 };
 
 const show = async (req: Request, res: Response): Promise<void> => {
-  const product = await store.show(req.body.id);
-  var token = jwt.sign(
-    { product: product },
-    process.env.TOKEN_SECRET as string
-  );
-  res.json(token);
+  try {
+    const product = await store.show(req.body.id);
+    var token = jwt.sign(
+      { product: product },
+      process.env.TOKEN_SECRET as string
+    );
+    res.json(token);
+  } catch (err) {
+    throw err;
+  }
 };
 
 const create = async (req: Request, res: Response): Promise<void> => {
@@ -44,12 +52,16 @@ const create = async (req: Request, res: Response): Promise<void> => {
 };
 
 const destroy = async (req: Request, res: Response): Promise<void> => {
-  const deleted = await store.delete(req.body.id);
-  var token = jwt.sign(
-    { product: deleted },
-    process.env.TOKEN_SECRET as string
-  );
-  res.json(token);
+  try {
+    const deleted = await store.delete(req.body.id);
+    var token = jwt.sign(
+      { product: deleted },
+      process.env.TOKEN_SECRET as string
+    );
+    res.json(token);
+  } catch (err) {
+    throw err;
+  }
 };
 
 const products_routes = (app: express.Application): void => {

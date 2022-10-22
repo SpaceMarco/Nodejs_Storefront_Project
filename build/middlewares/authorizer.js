@@ -9,6 +9,7 @@ var auth = function (req, res, next) {
         var authorizationHeader = req.headers.authorization;
         var token = authorizationHeader.split(' ')[1];
         var decoded = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SECRET);
+        // jwt.sign(decoded, process.env.TOKEN_SECRET as string);
         next();
     }
     catch (err) {

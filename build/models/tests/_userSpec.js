@@ -52,7 +52,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.token = void 0;
 var supertest_1 = __importDefault(require("supertest"));
-var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var randomstring_1 = __importDefault(require("randomstring"));
 var jwt_decode_1 = __importDefault(require("jwt-decode"));
 var server_1 = __importDefault(require("../../server"));
@@ -88,43 +87,43 @@ describe('testing user model routes: ', function () {
         });
     }); });
     it('testing the main/index route', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var res;
+        var res, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, request.get('/')];
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, request.get('/')];
                 case 1:
                     res = _a.sent();
                     expect(res.status).toBe(200);
-                    return [2 /*return*/];
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_1 = _a.sent();
+                    throw err_1;
+                case 3: return [2 /*return*/];
             }
         });
     }); });
     it('testing to create users', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var accessToken, res;
+        var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    accessToken = jsonwebtoken_1.default.sign({ user: createduser }, process.env.TOKEN_SECRET);
-                    return [4 /*yield*/, request
-                            .post('/users')
-                            .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))
-                            .send(user2)];
+                case 0: return [4 /*yield*/, request.post('/users').send(user2)];
                 case 1:
                     res = _a.sent();
+                    exports.token = res.body;
                     expect(res.status).toBe(200);
                     return [2 /*return*/];
             }
         });
     }); });
     it('testing to show users', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var accessToken, res;
+        var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    accessToken = jsonwebtoken_1.default.sign({ user: createduser }, process.env.TOKEN_SECRET);
-                    return [4 /*yield*/, request
-                            .get('/users')
-                            .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))];
+                case 0: return [4 /*yield*/, request
+                        .get('/users')
+                        .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + exports.token }))];
                 case 1:
                     res = _a.sent();
                     expect(res.status).toBe(200);
@@ -143,8 +142,7 @@ describe('testing user model routes: ', function () {
                 case 1:
                     res = _a.sent();
                     expect(res.status).toBe(200);
-                    exports.token = 'Bearer ' + res.body;
-                    decodedHeader = (0, jwt_decode_1.default)(exports.token);
+                    decodedHeader = (0, jwt_decode_1.default)('Bearer ' + res.body);
                     // spyOn(console, 'log').and.callThrough();
                     // console.log(res.body);
                     // console.log('this is it: \n', decodedHeader.first_name);
@@ -156,15 +154,13 @@ describe('testing user model routes: ', function () {
         });
     }); });
     it('testing to delete user', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var accessToken, res;
+        var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    accessToken = jsonwebtoken_1.default.sign({ user: createduser }, process.env.TOKEN_SECRET);
-                    return [4 /*yield*/, request
-                            .delete('/users')
-                            .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))
-                            .send({ id: createduser.id })];
+                case 0: return [4 /*yield*/, request
+                        .delete('/users')
+                        .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + exports.token }))
+                        .send({ id: createduser.id })];
                 case 1:
                     res = _a.sent();
                     expect(res.status).toBe(200);

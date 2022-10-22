@@ -9,15 +9,23 @@ dotenv.config();
 const store = new UserModel();
 
 const index = async (_req: Request, res: Response): Promise<void> => {
-  const users = await store.index();
-  const token = jwt.sign({ user: users }, process.env.TOKEN_SECRET as string);
-  res.json(token);
+  try {
+    const users = await store.index();
+    const token = jwt.sign({ user: users }, process.env.TOKEN_SECRET as string);
+    res.json(token);
+  } catch (err) {
+    throw err;
+  }
 };
 
 const show = async (req: Request, res: Response): Promise<void> => {
-  const user = await store.show(req.body.id);
-  const token = jwt.sign({ user: user }, process.env.TOKEN_SECRET as string);
-  res.json(token);
+  try {
+    const user = await store.show(req.body.id);
+    const token = jwt.sign({ user: user }, process.env.TOKEN_SECRET as string);
+    res.json(token);
+  } catch (err) {
+    throw err;
+  }
 };
 
 const create = async (req: Request, res: Response): Promise<void> => {

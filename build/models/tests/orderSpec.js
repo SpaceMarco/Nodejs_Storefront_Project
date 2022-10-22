@@ -51,7 +51,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var supertest_1 = __importDefault(require("supertest"));
-var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var randomstring_1 = __importDefault(require("randomstring"));
 var server_1 = __importDefault(require("../../server"));
 var order_1 = require("../order");
@@ -60,6 +59,7 @@ var request = (0, supertest_1.default)(server_1.default);
 var orderStore = new order_1.OrderModel();
 var userStore = new user_1.UserModel();
 var createdOrder;
+var token;
 var user = {
     first_name: 'Tarek',
     last_name: 'Hisham',
@@ -87,11 +87,14 @@ var jsonHeaders = {
 };
 describe('testing order model routes: ', function () {
     beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, userStore.create(user)];
+                case 0: return [4 /*yield*/, request.post('/users').send(user)];
                 case 1:
-                    _a.sent();
+                    res = _a.sent();
+                    token = res.body;
+                    expect(res.status).toBe(200);
                     return [4 /*yield*/, orderStore.create(order1)];
                 case 2:
                     createdOrder = (_a.sent());
@@ -104,7 +107,9 @@ describe('testing order model routes: ', function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, request.get('/orders')];
+                case 0: return [4 /*yield*/, request
+                        .get('/orders')
+                        .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + token }))];
                 case 1:
                     res = _a.sent();
                     expect(res.status).toBe(200);
@@ -113,15 +118,13 @@ describe('testing order model routes: ', function () {
         });
     }); });
     it('testing to create orders', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var accessToken, res;
+        var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    accessToken = jsonwebtoken_1.default.sign({ product: createdOrder }, process.env.TOKEN_SECRET);
-                    return [4 /*yield*/, request
-                            .post('/orders')
-                            .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))
-                            .send(order2)];
+                case 0: return [4 /*yield*/, request
+                        .post('/orders')
+                        .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + token }))
+                        .send(order2)];
                 case 1:
                     res = _a.sent();
                     expect(res.status).toBe(200);
@@ -129,22 +132,18 @@ describe('testing order model routes: ', function () {
             }
         });
     }); });
-    it('testing to view orders from user ID', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var accessToken, res;
+    it('testing to view products from order ID', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    accessToken = jsonwebtoken_1.default.sign({ product: order_prod }, process.env.TOKEN_SECRET);
-                    return [4 /*yield*/, server_1.default.post("/orders/:".concat(order_prod.order_id), function (req, res) {
-                            // console.log(req.body); // the posted data
-                            res
-                                .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))
-                                .send({
-                                quantity: order_prod.quantity,
-                                productId: order_prod.product_id,
-                            });
-                            expect(res.status).toBe(200);
-                        })];
+                case 0: return [4 /*yield*/, server_1.default.post("/orders/:".concat(order_prod.order_id), function (req, res) {
+                        // console.log(req.body); // the posted data
+                        res.set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + token })).send({
+                            quantity: order_prod.quantity,
+                            productId: order_prod.product_id,
+                        });
+                        expect(res.status).toBe(200);
+                    })];
                 case 1:
                     res = _a.sent();
                     return [2 /*return*/];
@@ -157,7 +156,7 @@ describe('testing order model routes: ', function () {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, server_1.default.post("/orders/:".concat(order_prod.order_id, "/products"), function (req, res) {
                         // console.log(req.body); // the posted data
-                        res.send({
+                        res.set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + token })).send({
                             quantity: order_prod.quantity,
                             productId: order_prod.product_id,
                         });
@@ -173,7 +172,10 @@ describe('testing order model routes: ', function () {
         var ord_prod;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, request.get('/orders/products')];
+                case 0: return [4 /*yield*/, request
+                        .get('/orders/products')
+                        .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + token }))
+                        .send(order2)];
                 case 1:
                     ord_prod = _a.sent();
                     expect(ord_prod.status).toBe(200);

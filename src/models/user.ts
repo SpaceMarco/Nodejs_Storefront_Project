@@ -76,22 +76,26 @@ export class UserModel {
     phone: string,
     password: string
   ): Promise<User | null> {
-    const conn = await Client.connect();
-    const sql = 'SELECT * from users Where phone=($1)';
+    try {
+      const conn = await Client.connect();
+      const sql = 'SELECT * from users Where phone=($1)';
 
-    const res = await conn.query(sql, [phone]);
+      const res = await conn.query(sql, [phone]);
 
-    console.log(password + pepper);
+      console.log(password + pepper);
 
-    if (res.rows.length) {
-      const user = res.rows[0];
-      console.log(user);
+      if (res.rows.length) {
+        const user = res.rows[0];
+        console.log(user);
 
-      if (bcrypt.compareSync(password + pepper, user.password)) {
-        return user;
+        if (bcrypt.compareSync(password + pepper, user.password)) {
+          return user;
+        }
       }
+      return null;
+    } catch (err) {
+      throw new Error(`Could not authenticate. Error: ${err}`);
     }
-    return null;
   }
 
   async delete(id: string): Promise<User> {

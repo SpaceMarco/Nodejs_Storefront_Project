@@ -51,12 +51,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var supertest_1 = __importDefault(require("supertest"));
-var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+var randomstring_1 = __importDefault(require("randomstring"));
 var server_1 = __importDefault(require("../../server"));
 var product_1 = require("../product");
 var request = (0, supertest_1.default)(server_1.default);
 var productStore = new product_1.ProductModel();
 var createdproduct;
+var token;
 var product1 = {
     name: 'Milk',
     price: 5,
@@ -65,16 +66,28 @@ var product2 = {
     name: 'Coat',
     price: 15,
 };
+var user_login = {
+    first_name: 'Ali',
+    last_name: 'Omar',
+    phone: randomstring_1.default.generate({ length: 12, charset: 'numeric' }),
+    password: '123',
+};
 var jsonHeaders = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
 };
 describe('testing product model routes: ', function () {
     beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, productStore.create(product1)];
+                case 0: return [4 /*yield*/, request.post('/users').send(user_login)];
                 case 1:
+                    res = _a.sent();
+                    token = res.body;
+                    expect(res.status).toBe(200);
+                    return [4 /*yield*/, productStore.create(product1)];
+                case 2:
                     createdproduct = _a.sent();
                     return [2 /*return*/];
             }
@@ -93,14 +106,14 @@ describe('testing product model routes: ', function () {
         });
     }); });
     it('testing to create products', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var accessToken, res;
+        var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    accessToken = jsonwebtoken_1.default.sign({ product: createdproduct }, process.env.TOKEN_SECRET);
+                    spyOn(console, 'log').and.callThrough();
                     return [4 /*yield*/, request
                             .post('/products')
-                            .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))
+                            .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + token }))
                             .send(product2)];
                 case 1:
                     res = _a.sent();
@@ -122,15 +135,14 @@ describe('testing product model routes: ', function () {
         });
     }); });
     it('testing to delete product', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var accessToken, res;
+        var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    accessToken = jsonwebtoken_1.default.sign({ product: createdproduct }, process.env.TOKEN_SECRET);
                     spyOn(console, 'log').and.callThrough();
                     return [4 /*yield*/, request
                             .delete('/products')
-                            .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + accessToken }))
+                            .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + token }))
                             .send({ id: createdproduct.id })];
                 case 1:
                     res = _a.sent();

@@ -10,6 +10,8 @@ const auth = (req: Request, res: Response, next: NextFunction): void => {
       process.env.TOKEN_SECRET as string
     );
 
+    // jwt.sign(decoded, process.env.TOKEN_SECRET as string);
+
     next();
   } catch (err) {
     res.status(401);

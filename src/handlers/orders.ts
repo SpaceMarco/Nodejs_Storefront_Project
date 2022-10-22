@@ -16,14 +16,22 @@ export type Order_products = {
 };
 
 const index = async (_req: Request, res: Response): Promise<void> => {
-  const orders = await store.index();
-  res.json(orders);
+  try {
+    const orders = await store.index();
+    res.json(orders);
+  } catch (err) {
+    throw err;
+  }
 };
 
 const show = async (req: Request, res: Response): Promise<void> => {
-  const order = await store.show(req.body.id);
-  var token = jwt.sign({ user: order }, process.env.TOKEN_SECRET as string);
-  res.json(token);
+  try {
+    const order = await store.show(req.body.id);
+    var token = jwt.sign({ user: order }, process.env.TOKEN_SECRET as string);
+    res.json(token);
+  } catch (err) {
+    throw err;
+  }
 };
 
 const show_orders_prod = async (req: Request, res: Response): Promise<void> => {
@@ -57,9 +65,13 @@ const create = async (req: Request, res: Response): Promise<void> => {
 };
 
 const destroy = async (req: Request, res: Response): Promise<void> => {
-  const deleted = await store.delete(req.body.id);
-  var token = jwt.sign({ user: deleted }, process.env.TOKEN_SECRET as string);
-  res.json(token);
+  try {
+    const deleted = await store.delete(req.body.id);
+    var token = jwt.sign({ user: deleted }, process.env.TOKEN_SECRET as string);
+    res.json(token);
+  } catch (err) {
+    throw err;
+  }
 };
 
 const addProduct = async (_req: Request, res: Response): Promise<void> => {
@@ -87,12 +99,12 @@ const addProduct = async (_req: Request, res: Response): Promise<void> => {
   }
 };
 const orders_routes = (app: express.Application): void => {
-  app.get('/orders/products', show_orders_prod);
-  app.post('/orders/:id/products', addProduct);
+  app.get('/orders/products', authorization, show_orders_prod);
+  app.post('/orders/:id/products', authorization, addProduct);
   app.get('/orders/:id', authorization, show);
-  app.get('/orders', index);
-  app.post('/orders', create);
-  app.delete('/orders', destroy);
+  app.get('/orders', authorization, index);
+  app.post('/orders', authorization, create);
+  app.delete('/orders', authorization, destroy);
 };
 
 export default orders_routes;

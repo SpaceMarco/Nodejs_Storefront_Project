@@ -7,13 +7,14 @@ import { Product, ProductModel } from '../product';
 import { Order, OrderModel } from '../order';
 import { User, UserModel } from '../user';
 import auth from '../../middlewares/authorizer';
-import token from './_userSpec';
 
 const request = supertest(app);
 const orderStore = new OrderModel();
 const userStore = new UserModel();
 
 let createdOrder: Order;
+
+let token: string;
 
 export type Order_products = {
   id?: string;
@@ -53,47 +54,38 @@ const jsonHeaders = {
 
 describe('testing order model routes: ', () => {
   beforeAll(async () => {
-    await userStore.create(user);
+    const res = await request.post('/users').send(user);
+    token = res.body;
+    expect(res.status).toBe(200);
 
     createdOrder = (await orderStore.create(order1)) as Order;
     expect(createdOrder.status as string).toEqual(order1.status as string);
   });
 
   it('testing the main/index', async () => {
-    const res = await request.get('/orders');
+    const res = await request
+      .get('/orders')
+      .set({ ...jsonHeaders, Authorization: 'Bearer ' + token });
     expect(res.status).toBe(200);
   });
 
   it('testing to create orders', async () => {
-    // let res = await request.post('/orders').set(jsonHeaders).send(order1);
-    // expect(res.status).toBe(200);
-
-    const accessToken = jwt.sign(
-      { product: createdOrder },
-      process.env.TOKEN_SECRET as string
-    );
     const res = await request
       .post('/orders')
-      .set({ ...jsonHeaders, Authorization: 'Bearer ' + accessToken })
+      .set({ ...jsonHeaders, Authorization: 'Bearer ' + token })
       .send(order2);
     expect(res.status).toBe(200);
   });
 
-  it('testing to view orders from user ID', async () => {
-    const accessToken = jwt.sign(
-      { product: order_prod },
-      process.env.TOKEN_SECRET as string
-    );
+  it('testing to view products from order ID', async () => {
     const res = await app.post(
       `/orders/:${order_prod.order_id}`,
       function (req, res) {
         // console.log(req.body); // the posted data
-        res
-          .set({ ...jsonHeaders, Authorization: 'Bearer ' + accessToken })
-          .send({
-            quantity: order_prod.quantity,
-            productId: order_prod.product_id,
-          });
+        res.set({ ...jsonHeaders, Authorization: 'Bearer ' + token }).send({
+          quantity: order_prod.quantity,
+          productId: order_prod.product_id,
+        });
         expect(res.status).toBe(200);
       }
     );
@@ -104,7 +96,7 @@ describe('testing order model routes: ', () => {
       `/orders/:${order_prod.order_id}/products`,
       function (req, res) {
         // console.log(req.body); // the posted data
-        res.send({
+        res.set({ ...jsonHeaders, Authorization: 'Bearer ' + token }).send({
           quantity: order_prod.quantity,
           productId: order_prod.product_id,
         });
@@ -114,7 +106,10 @@ describe('testing order model routes: ', () => {
   });
 
   it('testing to view products with orders', async () => {
-    const ord_prod = await request.get('/orders/products');
+    const ord_prod = await request
+      .get('/orders/products')
+      .set({ ...jsonHeaders, Authorization: 'Bearer ' + token })
+      .send(order2);
     expect(ord_prod.status).toBe(200);
   });
 });

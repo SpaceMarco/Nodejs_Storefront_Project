@@ -37,33 +37,24 @@ describe('testing user model routes: ', () => {
   });
 
   it('testing the main/index route', async () => {
-    const res = await request.get('/');
-    expect(res.status).toBe(200);
+    try {
+      const res = await request.get('/');
+      expect(res.status).toBe(200);
+    } catch (err) {
+      throw err;
+    }
   });
 
   it('testing to create users', async () => {
-    const accessToken = jwt.sign(
-      { user: createduser },
-      process.env.TOKEN_SECRET as string
-    );
-
-    const res = await request
-      .post('/users')
-      .set({ ...jsonHeaders, Authorization: 'Bearer ' + accessToken })
-      .send(user2);
-
+    const res = await request.post('/users').send(user2);
+    token = res.body;
     expect(res.status).toBe(200);
   });
 
   it('testing to show users', async () => {
-    const accessToken = jwt.sign(
-      { user: createduser },
-      process.env.TOKEN_SECRET as string
-    );
-
     const res = await request
       .get('/users')
-      .set({ ...jsonHeaders, Authorization: 'Bearer ' + accessToken });
+      .set({ ...jsonHeaders, Authorization: 'Bearer ' + token });
 
     expect(res.status).toBe(200);
   });
@@ -74,8 +65,7 @@ describe('testing user model routes: ', () => {
       .set(jsonHeaders)
       .send({ phone: user1.phone, password: user1.password });
     expect(res.status).toBe(200);
-    token = 'Bearer ' + res.body;
-    const decodedHeader: User = jwt_decode(token) as User;
+    const decodedHeader: User = jwt_decode('Bearer ' + res.body) as User;
     // spyOn(console, 'log').and.callThrough();
     // console.log(res.body);
     // console.log('this is it: \n', decodedHeader.first_name);
@@ -90,14 +80,9 @@ describe('testing user model routes: ', () => {
   });
 
   it('testing to delete user', async () => {
-    const accessToken = jwt.sign(
-      { user: createduser },
-      process.env.TOKEN_SECRET as string
-    );
-
     const res = await request
       .delete('/users')
-      .set({ ...jsonHeaders, Authorization: 'Bearer ' + accessToken })
+      .set({ ...jsonHeaders, Authorization: 'Bearer ' + token })
       .send({ id: createduser.id });
 
     expect(res.status).toBe(200);
