@@ -19,7 +19,7 @@ use **"npm install _____"** to install the following packages
 - **Bcrypt** for password hashing.
 - **DB-migarate** for database migration.
 - **Postgres** for database management.
-- **JWT** for web tokens and authorization.
+- **jsonwebtoken** for web tokens and authorization.
 - **Randomstring** for creating unique phone numbers.
 - **Dotenv** for enviroment variable access.
 
