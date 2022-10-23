@@ -17,7 +17,7 @@ use **"npm install _____"** to install the following packages
 - **Jasmine** to write test cases for the code.
 - **Supertest** for endpoint testing.
 - **Bcrypt** for password hashing.
-- **DB-migarate** for database migration.
+- **db-migarate** for database migration.
 - **Postgres** for database management.
 - **jsonwebtoken** for web tokens and authorization.
 - **Randomstring** for creating unique phone numbers.
