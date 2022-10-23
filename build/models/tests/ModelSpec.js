@@ -66,11 +66,11 @@ var order1 = {
 };
 var order_prod = {
     quantity: 2,
-    order_id: '5',
-    product_id: '5',
+    order_id: '1',
+    product_id: '1',
 };
 describe('User Model', function () {
-    it('Add user', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('create user test', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -80,11 +80,12 @@ describe('User Model', function () {
                     expect(res.first_name).toEqual(user_test.first_name);
                     expect(res.last_name).toEqual(user_test.last_name);
                     createdUser = res;
+                    order1.usrID = createdUser.id;
                     return [2 /*return*/];
             }
         });
     }); });
-    it('User Authentication test', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('authentication test', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -100,7 +101,7 @@ describe('User Model', function () {
     }); });
 });
 describe('Product Model', function () {
-    it('Add Product test', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('create product test', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -114,7 +115,7 @@ describe('Product Model', function () {
             }
         });
     }); });
-    it('Return requested product by ID test', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('show product by ID test', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -127,7 +128,7 @@ describe('Product Model', function () {
             }
         });
     }); });
-    it('Getting all products test', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('display all products test', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -142,33 +143,57 @@ describe('Product Model', function () {
     }); });
 });
 describe('Order Model', function () {
-    it('Create new order test', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('create new order test', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    order1.usrID = createdUser.id;
-                    return [4 /*yield*/, orderStore.create(order1)];
+                case 0: return [4 /*yield*/, orderStore.create(order1)];
                 case 1:
                     res = _a.sent();
-                    expect(res.usrID).toEqual(order1.usrID);
+                    expect(res.usrID).toBeDefined;
                     expect(res.status).toEqual(order1.status);
                     createdOrder = res;
                     return [2 /*return*/];
             }
         });
     }); });
-    it('Return user orders by order_id test', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('user orders by user_id test', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, orderStore.show('1')];
                 case 1:
                     res = _a.sent();
-                    // spyOn(console, 'log').and.callThrough();
-                    // console.log("++++++++++++++++++++++++++++ "+res);
-                    expect(res[0].usrID).toEqual('1');
-                    expect(res[0].status).toEqual(createdOrder.status);
+                    expect(res.usrID).toBeDefined;
+                    expect(res.status).toEqual(createdOrder.status);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('Add product to order test', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, orderStore.addProduct(order_prod.quantity, order_prod.order_id, order_prod.product_id)];
+                case 1:
+                    res = _a.sent();
+                    expect(res.orderId).toBeDefined;
+                    expect(res.productId).toBeDefined;
+                    expect(res.quantity).toEqual(order_prod.quantity);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('products added to orders test', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, orderStore.show_orders_prod()];
+                case 1:
+                    res = _a.sent();
+                    expect(res[0].orderId).toBeDefined;
+                    expect(res[0].productId).toBeDefined;
+                    expect(res[0].quantity).toEqual(order_prod.quantity);
                     return [2 /*return*/];
             }
         });

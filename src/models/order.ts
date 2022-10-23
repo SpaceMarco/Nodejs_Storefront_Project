@@ -37,9 +37,9 @@ export class OrderModel {
       throw new Error(`cannot get orders ${err}`);
     }
   }
-  async show(id: string): Promise<Order[]> {
+  async show(id: string): Promise<Order> {
     try {
-      const sql = 'SELECT * FROM orders WHERE id=($1) and status=\'active\'';
+      const sql = "SELECT * FROM orders WHERE id=($1) and status='active'";
       // @ts-ignore
       const conn = await Client.connect();
 
@@ -47,7 +47,7 @@ export class OrderModel {
 
       conn.release();
 
-      return result.rows;
+      return result.rows[0];
     } catch (err) {
       throw new Error(`Could not find order ${id}. Error: ${err}`);
     }
@@ -57,7 +57,7 @@ export class OrderModel {
     quantity: number,
     orderId: string,
     productId: string
-  ): Promise<Order> {
+  ): Promise<Order_products> {
     try {
       const sql =
         'INSERT INTO order_products (quantity, order_id, product_id) VALUES($1, $2, $3) RETURNING *';

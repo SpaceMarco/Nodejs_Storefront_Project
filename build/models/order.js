@@ -99,7 +99,7 @@ var OrderModel = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        sql = 'SELECT * FROM orders WHERE id=($1) and status=\'active\'';
+                        sql = "SELECT * FROM orders WHERE id=($1) and status='active'";
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
@@ -107,7 +107,7 @@ var OrderModel = /** @class */ (function () {
                     case 2:
                         result = _a.sent();
                         conn.release();
-                        return [2 /*return*/, result.rows];
+                        return [2 /*return*/, result.rows[0]];
                     case 3:
                         err_3 = _a.sent();
                         throw new Error("Could not find order ".concat(id, ". Error: ").concat(err_3));

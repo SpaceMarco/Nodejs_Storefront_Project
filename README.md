@@ -37,7 +37,7 @@ and create .env file in the root folder and put the following variables inside i
  >POSTGRES_TEST = storefront_test<br/>
  >POSTGRES_USER = postgres<br/>
  >POSTGRES_PASSWORD = 123<br/>
- >ENV = dev<br/>
+ >ENV = test<br/>
  >BCRYPT_PASSWORD=speak-friend-and-enter<br/>
  >SALT_ROUNDS=10<br/>
  >TOKEN_SECRET=secret123!<br/>
