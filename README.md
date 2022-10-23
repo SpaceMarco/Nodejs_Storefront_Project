@@ -74,7 +74,7 @@ https://localhost:3000
 > "test": to run the unit test on the test database enviroment.<br/>
 
 use **"npm run test"** to run all tests.. <br/>
-![image](https://user-images.githubusercontent.com/60396165/197323346-71bfb1c2-e0bd-4778-a2f1-ee65211f05c2.png)<br/>
+![image](https://user-images.githubusercontent.com/60396165/197418096-6d48f3bd-c803-4fe0-ae18-137797378d55.png)
 
 to run the server simply run:<br/>
 >node build/server<br/>
