@@ -31,7 +31,7 @@ const jsonHeaders = {
   'Content-Type': 'application/json',
 };
 
-describe('testing user model routes: ', () => {
+describe('testing user routes: ', () => {
   beforeAll(async () => {
     createduser = (await userStore.create(user1)) as User;
   });
