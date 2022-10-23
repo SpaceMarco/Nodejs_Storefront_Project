@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "set ENV=test&& db-migrate --env test up && npx tsc && jasmine && db-migrate --env test down && db-migrate db:drop test",
+    "test": "set ENV=test&& npm run migrate:test:UP && npx tsc && jasmine && npm run migrate:test:DOWN",
     "jasmine": "ENV=test jasmine",
     "start": "nodemon src/index.ts",
     "lint": "eslint src/**/*.ts",
     "lint:f": "eslint src/**/*.ts --fix",
-    "migrate": "db-migrate --env test up && db-migrate up",
+    "migrate:test:UP": "db-migrate --env test up",
+    "migrate:dev:UP": "db-migrate up",
+    "migrate:test:DOWN": "db-migrate --env test reset",
+    "migrate:dev:DOWN": "db-migrate down",
     "prettier": "prettier --config .prettierrc \"src/**/*.ts\" --write",
     "build": "npm run prettier && npx tsc"
   },

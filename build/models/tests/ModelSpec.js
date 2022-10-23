@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -50,123 +39,138 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.token = void 0;
-var supertest_1 = __importDefault(require("supertest"));
-var randomstring_1 = __importDefault(require("randomstring"));
-var jwt_decode_1 = __importDefault(require("jwt-decode"));
-var server_1 = __importDefault(require("../../server"));
+var product_1 = require("../product");
 var user_1 = require("../user");
-var request = (0, supertest_1.default)(server_1.default);
+var order_1 = require("../order");
+var randomstring_1 = __importDefault(require("randomstring"));
+var productStore = new product_1.ProductModel();
 var userStore = new user_1.UserModel();
-var createduser;
-var user1 = {
-    first_name: 'Ali',
-    last_name: 'Omar',
-    phone: randomstring_1.default.generate({ length: 12, charset: 'numeric' }),
-    password: '123',
-};
-var user2 = {
+var orderStore = new order_1.OrderModel();
+var createdUser;
+var createdProduct;
+var createdOrder;
+var user_test = {
     first_name: 'Tarek',
     last_name: 'Hisham',
     phone: randomstring_1.default.generate({ length: 12, charset: 'numeric' }),
     password: '123',
 };
-var jsonHeaders = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
+var product = {
+    name: 'Meat',
+    price: 55,
 };
-describe('testing user model routes: ', function () {
-    beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, userStore.create(user1)];
-                case 1:
-                    createduser = (_a.sent());
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    it('testing the main/index route', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var res, err_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, request.get('/')];
-                case 1:
-                    res = _a.sent();
-                    expect(res.status).toBe(200);
-                    return [3 /*break*/, 3];
-                case 2:
-                    err_1 = _a.sent();
-                    throw err_1;
-                case 3: return [2 /*return*/];
-            }
-        });
-    }); });
-    it('testing to create users', function () { return __awaiter(void 0, void 0, void 0, function () {
+var order1 = {
+    status: 'active',
+    usrID: '1',
+    date: new Date('4/4/2022'),
+};
+var order_prod = {
+    quantity: 2,
+    order_id: '5',
+    product_id: '5',
+};
+describe('User Model', function () {
+    it('Add user', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, request.post('/users').send(user2)];
+                case 0: return [4 /*yield*/, userStore.create(user_test)];
                 case 1:
                     res = _a.sent();
-                    exports.token = res.body;
-                    expect(res.status).toBe(200);
+                    expect(res.first_name).toEqual(user_test.first_name);
+                    expect(res.last_name).toEqual(user_test.last_name);
+                    createdUser = res;
                     return [2 /*return*/];
             }
         });
     }); });
-    it('testing to show users', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('User Authentication test', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, request
-                        .get('/users')
-                        .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + exports.token }))];
+                case 0: return [4 /*yield*/, userStore.authenticate_hash(user_test.phone, user_test.password)];
                 case 1:
-                    res = _a.sent();
-                    expect(res.status).toBe(200);
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    it('authenticate the user', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var res, decodedHeader;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, request
-                        .post('/authenticate')
-                        .set(jsonHeaders)
-                        .send({ phone: user1.phone, password: user1.password })];
-                case 1:
-                    res = _a.sent();
-                    expect(res.status).toBe(200);
-                    decodedHeader = (0, jwt_decode_1.default)('Bearer ' + res.body);
-                    // spyOn(console, 'log').and.callThrough();
-                    // console.log(res.body);
-                    // console.log('this is it: \n', decodedHeader.first_name);
-                    expect(decodedHeader.first_name).toEqual(user1.first_name);
-                    expect(decodedHeader.last_name).toEqual(user1.last_name);
-                    expect(decodedHeader.phone).toEqual(user1.phone);
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    it('testing to delete user', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var res;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, request
-                        .delete('/users')
-                        .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + exports.token }))
-                        .send({ id: createduser.id })];
-                case 1:
-                    res = _a.sent();
-                    expect(res.status).toBe(200);
+                    res = (_a.sent());
+                    expect(res.phone).toEqual(user_test.phone);
+                    expect(res.first_name).toEqual(user_test.first_name);
+                    expect(res.last_name).toEqual(user_test.last_name);
                     return [2 /*return*/];
             }
         });
     }); });
 });
-exports.default = exports.token;
+describe('Product Model', function () {
+    it('Add Product test', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, productStore.create(product)];
+                case 1:
+                    res = _a.sent();
+                    expect(res.name).toEqual(product.name);
+                    expect(res.price).toEqual(product.price);
+                    createdProduct = res;
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('Return requested product by ID test', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, productStore.show(createdProduct.id)];
+                case 1:
+                    res = _a.sent();
+                    expect(res.name).toEqual(createdProduct.name);
+                    expect(res.price).toEqual(createdProduct.price);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('Getting all products test', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, productStore.index()];
+                case 1:
+                    res = _a.sent();
+                    expect(res[0].name).toEqual(createdProduct.name);
+                    expect(res[0].price).toEqual(createdProduct.price);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+});
+describe('Order Model', function () {
+    it('Create new order test', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    order1.usrID = createdUser.id;
+                    return [4 /*yield*/, orderStore.create(order1)];
+                case 1:
+                    res = _a.sent();
+                    expect(res.usrID).toEqual(order1.usrID);
+                    expect(res.status).toEqual(order1.status);
+                    createdOrder = res;
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('Return user orders by order_id test', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, orderStore.show('1')];
+                case 1:
+                    res = _a.sent();
+                    // spyOn(console, 'log').and.callThrough();
+                    // console.log("++++++++++++++++++++++++++++ "+res);
+                    expect(res[0].usrID).toEqual('1');
+                    expect(res[0].status).toEqual(createdOrder.status);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+});

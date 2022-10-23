@@ -4,13 +4,13 @@
     "host": "127.0.0.1",
     "database": "Storefront",
     "user": "postgres",
-    "password": ""
+    "password": "123"
   },
   "test": {
     "driver": "pg",
     "host": "127.0.0.1",
     "database": "storefront_test",
     "user": "postgres",
-    "password": ""
+    "password": "123"
   }
 }
