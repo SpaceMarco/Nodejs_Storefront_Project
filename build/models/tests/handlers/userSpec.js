@@ -50,151 +50,123 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.token = void 0;
 var supertest_1 = __importDefault(require("supertest"));
 var randomstring_1 = __importDefault(require("randomstring"));
 var jwt_decode_1 = __importDefault(require("jwt-decode"));
-var server_1 = __importDefault(require("../../server"));
-var product_1 = require("../product");
-var order_1 = require("../order");
+var server_1 = __importDefault(require("../../../server"));
+var user_1 = require("../../user");
 var request = (0, supertest_1.default)(server_1.default);
-var orderStore = new order_1.OrderModel();
-var productStore = new product_1.ProductModel();
-var createdOrder;
-var createdProduct;
-var token;
-var user_test = {
+var userStore = new user_1.UserModel();
+var createduser;
+var user1 = {
+    first_name: 'Ali',
+    last_name: 'Omar',
+    phone: randomstring_1.default.generate({ length: 12, charset: 'numeric' }),
+    password: '123',
+};
+var user2 = {
     first_name: 'Tarek',
     last_name: 'Hisham',
     phone: randomstring_1.default.generate({ length: 12, charset: 'numeric' }),
     password: '123',
 };
-var order_prod = {
-    quantity: 2,
-    order_id: '5',
-    product_id: '5',
-};
-var product = {
-    name: 'Coat',
-    price: 15,
-};
-var order1 = {
-    status: 'complete',
-    usrID: '1',
-    date: new Date('4/4/2022'),
-};
-var order2 = {
-    status: 'active',
-    usrID: '1',
-    date: new Date('4/4/2022'),
-};
 var jsonHeaders = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
 };
-describe('testing order routes: ', function () {
+describe('testing user routes: ', function () {
     beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, userStore.create(user1)];
+                case 1:
+                    createduser = (_a.sent());
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('testing the main/index route', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, request.get('/')];
+                case 1:
+                    res = _a.sent();
+                    expect(res.status).toBe(200);
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_1 = _a.sent();
+                    throw err_1;
+                case 3: return [2 /*return*/];
+            }
+        });
+    }); });
+    it('testing to create users', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, request.post('/users').send(user2)];
+                case 1:
+                    res = _a.sent();
+                    exports.token = res.body;
+                    expect(res.status).toBe(200);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('testing to show users', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, request
+                        .get('/users')
+                        .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + exports.token }))];
+                case 1:
+                    res = _a.sent();
+                    expect(res.status).toBe(200);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('authenticate the user', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res, decodedHeader;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, request.post('/users').send(user_test)];
+                case 0: return [4 /*yield*/, request
+                        .post('/authenticate')
+                        .set(jsonHeaders)
+                        .send({ phone: user1.phone, password: user1.password })];
                 case 1:
                     res = _a.sent();
-                    token = res.body;
                     expect(res.status).toBe(200);
-                    decodedHeader = (0, jwt_decode_1.default)('Bearer ' + token);
-                    order1.usrID = decodedHeader.id;
-                    order2.usrID = decodedHeader.id;
-                    return [4 /*yield*/, productStore.create(product)];
-                case 2:
-                    createdProduct = (_a.sent());
-                    return [4 /*yield*/, orderStore.create(order1)];
-                case 3:
-                    createdOrder = (_a.sent());
-                    order_prod.order_id = createdOrder.id;
-                    order_prod.product_id = createdProduct.id;
-                    expect(createdOrder.status).toEqual(order1.status);
+                    decodedHeader = (0, jwt_decode_1.default)('Bearer ' + res.body);
+                    // spyOn(console, 'log').and.callThrough();
+                    // console.log(res.body);
+                    // console.log('this is it: \n', decodedHeader.first_name);
+                    expect(decodedHeader.first_name).toEqual(user1.first_name);
+                    expect(decodedHeader.last_name).toEqual(user1.last_name);
+                    expect(decodedHeader.phone).toEqual(user1.phone);
                     return [2 /*return*/];
             }
         });
     }); });
-    it('testing the main/index', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('testing to delete user', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, request
-                        .get('/orders')
-                        .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + token }))];
+                        .delete('/users')
+                        .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + exports.token }))
+                        .send({ id: createduser.id })];
                 case 1:
                     res = _a.sent();
                     expect(res.status).toBe(200);
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    it('testing to create orders', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var res;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, request
-                        .post('/orders')
-                        .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + token }))
-                        .send(order2)];
-                case 1:
-                    res = _a.sent();
-                    expect(res.status).toBe(200);
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    it('testing to view products from order ID', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var res;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, server_1.default.post("/orders/:".concat(order_prod.order_id), function (req, res) {
-                        // console.log(req.body); // the posted data
-                        res.set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + token })).send({
-                            quantity: order_prod.quantity,
-                            productId: order_prod.product_id,
-                        });
-                        expect(res.status).toBe(200);
-                    })];
-                case 1:
-                    res = _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    it('testing to add products to an order', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var res;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, server_1.default.post("/orders/:".concat(order_prod.order_id, "/products"), function (req, res) {
-                        // console.log(req.body); // the posted data
-                        res.set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + token })).send({
-                            quantity: order_prod.quantity,
-                            productId: order_prod.product_id,
-                        });
-                        expect(res.status).toBe(200);
-                    })];
-                case 1:
-                    res = _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    }); });
-    it('testing to view products with orders', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var ord_prod;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, request
-                        .get('/orders/products')
-                        .set(__assign(__assign({}, jsonHeaders), { Authorization: 'Bearer ' + token }))
-                        .send(order2)];
-                case 1:
-                    ord_prod = _a.sent();
-                    expect(ord_prod.status).toBe(200);
                     return [2 /*return*/];
             }
         });
     }); });
 });
+exports.default = exports.token;

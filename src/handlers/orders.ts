@@ -20,7 +20,8 @@ const index = async (_req: Request, res: Response): Promise<void> => {
     const orders = await store.index();
     res.json(orders);
   } catch (err) {
-    throw err;
+    res.status(404);
+    res.json({ error: `Couldn't find any records, ERROR: ${err}` });
   }
 };
 
@@ -30,7 +31,8 @@ const show = async (req: Request, res: Response): Promise<void> => {
     var token = jwt.sign({ user: order }, process.env.TOKEN_SECRET as string);
     res.json(token);
   } catch (err) {
-    throw err;
+    res.status(404);
+    res.json({ error: `enter a correct order id, ERROR: ${err}` });
   }
 };
 
@@ -40,7 +42,8 @@ const show_orders_prod = async (req: Request, res: Response): Promise<void> => {
     var token = jwt.sign({ user: s }, process.env.TOKEN_SECRET as string);
     res.json(token);
   } catch (err) {
-    throw err;
+    res.status(404);
+    res.json({ error: `Couldn't find any records, ERROR: ${err}` });
   }
 };
 
@@ -60,7 +63,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
     res.json(token);
   } catch (err) {
     res.status(400);
-    res.json(err);
+    res.json({ error: `enter correct order data, ERROR: ${err}` });
   }
 };
 
@@ -70,7 +73,8 @@ const destroy = async (req: Request, res: Response): Promise<void> => {
     var token = jwt.sign({ user: deleted }, process.env.TOKEN_SECRET as string);
     res.json(token);
   } catch (err) {
-    throw err;
+    res.status(406);
+    res.json({ error: `couldn't delete user, ERROR: ${err}` });
   }
 };
 
@@ -95,7 +99,7 @@ const addProduct = async (_req: Request, res: Response): Promise<void> => {
     res.json(token);
   } catch (err) {
     res.status(400);
-    res.json(err);
+    res.json({ error: `couldn't add this product to an order, ERROR: ${err}` });
   }
 };
 const orders_routes = (app: express.Application): void => {

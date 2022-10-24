@@ -2,9 +2,9 @@ import supertest from 'supertest';
 import jwt from 'jsonwebtoken';
 import Randomstring from 'randomstring';
 import jwt_decode from 'jwt-decode';
-import app from '../../server';
-import { User, UserModel } from '../user';
-import auth from '../../middlewares/authorizer';
+import app from '../../../server';
+import { User, UserModel } from '../../user';
+import auth from '../../../middlewares/authorizer';
 
 const request = supertest(app);
 const userStore = new UserModel();

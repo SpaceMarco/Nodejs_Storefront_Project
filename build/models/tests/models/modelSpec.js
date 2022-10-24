@@ -39,10 +39,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var product_1 = require("../product");
-var user_1 = require("../user");
-var order_1 = require("../order");
+var product_1 = require("../../product");
+var user_1 = require("../../user");
+var order_1 = require("../../order");
 var randomstring_1 = __importDefault(require("randomstring"));
+var database_1 = __importDefault(require("../../../database"));
 var productStore = new product_1.ProductModel();
 var userStore = new user_1.UserModel();
 var orderStore = new order_1.OrderModel();
@@ -70,6 +71,22 @@ var order_prod = {
     product_id: '1',
 };
 describe('User Model', function () {
+    beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
+        var conn, sql, result;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, database_1.default.connect()];
+                case 1:
+                    conn = _a.sent();
+                    sql = "\n    DELETE FROM users;\n    ALTER SEQUENCE users_id_seq RESTART WITH 1;\n    DELETE FROM products;\n    ALTER SEQUENCE products_id_seq RESTART WITH 1;\n    DELETE FROM orders;\n    ALTER SEQUENCE orders_id_seq RESTART WITH 1;\n    ";
+                    return [4 /*yield*/, conn.query(sql)];
+                case 2:
+                    result = _a.sent();
+                    conn.release();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
     it('create user test', function () { return __awaiter(void 0, void 0, void 0, function () {
         var res;
         return __generator(this, function (_a) {
@@ -164,7 +181,6 @@ describe('Order Model', function () {
                 case 0: return [4 /*yield*/, orderStore.show('1')];
                 case 1:
                     res = _a.sent();
-                    expect(res.usrID).toBeDefined;
                     expect(res.status).toEqual(createdOrder.status);
                     return [2 /*return*/];
             }

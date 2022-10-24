@@ -14,7 +14,8 @@ const index = async (_req: Request, res: Response): Promise<void> => {
     const token = jwt.sign({ user: users }, process.env.TOKEN_SECRET as string);
     res.json(token);
   } catch (err) {
-    throw err;
+    res.status(404);
+    res.json({ error: `Couldn't find any records, ERROR: ${err}` });
   }
 };
 
@@ -24,7 +25,8 @@ const show = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign({ user: user }, process.env.TOKEN_SECRET as string);
     res.json(token);
   } catch (err) {
-    throw err;
+    res.status(404);
+    res.json({ error: `enter a correct phone and password, ERROR: ${err}` });
   }
 };
 
@@ -42,7 +44,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
     res.json(token);
   } catch (err) {
     res.status(400);
-    res.json(err);
+    res.json({ error: `enter correct user data, ERROR: ${err}` });
   }
 };
 
@@ -52,8 +54,8 @@ const destroy = async (req: Request, res: Response): Promise<void> => {
     var token = jwt.sign({ user: deleted }, process.env.TOKEN_SECRET as string);
     res.json(token);
   } catch (err) {
-    res.status(400);
-    res.json(err);
+    res.status(406);
+    res.json({ error: `couldn't delete user, ERROR: ${err}` });
   }
 };
 

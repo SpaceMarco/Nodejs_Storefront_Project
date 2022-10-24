@@ -14,7 +14,8 @@ const index = async (_req: Request, res: Response): Promise<void> => {
     );
     res.json(token);
   } catch (err) {
-    throw err;
+    res.status(404);
+    res.json({ error: `Couldn't find any records, ERROR: ${err}` });
   }
 };
 
@@ -27,7 +28,8 @@ const show = async (req: Request, res: Response): Promise<void> => {
     );
     res.json(token);
   } catch (err) {
-    throw err;
+    res.status(404);
+    res.json({ error: `enter a correct product id, ERROR: ${err}` });
   }
 };
 
@@ -47,7 +49,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
     res.json(token);
   } catch (err) {
     res.status(400);
-    res.json(err);
+    res.json({ error: `enter correct product data, ERROR: ${err}` });
   }
 };
 
@@ -60,7 +62,8 @@ const destroy = async (req: Request, res: Response): Promise<void> => {
     );
     res.json(token);
   } catch (err) {
-    throw err;
+    res.status(406);
+    res.json({ error: `couldn't delete product, ERROR: ${err}` });
   }
 };
 

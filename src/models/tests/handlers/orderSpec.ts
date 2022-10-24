@@ -2,11 +2,11 @@ import supertest from 'supertest';
 import jwt from 'jsonwebtoken';
 import Randomstring from 'randomstring';
 import jwt_decode from 'jwt-decode';
-import app from '../../server';
-import { Product, ProductModel } from '../product';
-import { Order, OrderModel } from '../order';
-import { User, UserModel } from '../user';
-import auth from '../../middlewares/authorizer';
+import app from '../../../server';
+import { Product, ProductModel } from '../../product';
+import { Order, OrderModel } from '../../order';
+import { User, UserModel } from '../../user';
+import auth from '../../../middlewares/authorizer';
 
 const request = supertest(app);
 const orderStore = new OrderModel();
@@ -38,8 +38,8 @@ const order_prod: Order_products = {
 };
 
 const product: Product = {
-  name: 'Coat',
-  price: 15,
+  name: 'Meat',
+  price: 55,
 };
 
 const order1: Order = {
@@ -65,6 +65,9 @@ describe('testing order routes: ', () => {
     expect(res.status).toBe(200);
 
     const decodedHeader: User = jwt_decode('Bearer ' + token) as User;
+
+    // spyOn(console, 'log').and.callThrough();
+    // console.log("_____________________________________________________________>"+decodedHeader.id);
 
     order1.usrID = decodedHeader.id as string;
     order2.usrID = decodedHeader.id as string;

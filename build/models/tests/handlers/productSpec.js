@@ -52,8 +52,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var supertest_1 = __importDefault(require("supertest"));
 var randomstring_1 = __importDefault(require("randomstring"));
-var server_1 = __importDefault(require("../../server"));
-var product_1 = require("../product");
+var server_1 = __importDefault(require("../../../server"));
+var product_1 = require("../../product");
 var request = (0, supertest_1.default)(server_1.default);
 var productStore = new product_1.ProductModel();
 var createdproduct;
@@ -63,8 +63,8 @@ var product1 = {
     price: 5,
 };
 var product2 = {
-    name: 'Coat',
-    price: 15,
+    name: 'Meat',
+    price: 55,
 };
 var user_login = {
     first_name: 'Ali',

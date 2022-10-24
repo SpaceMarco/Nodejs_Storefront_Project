@@ -3,9 +3,9 @@ import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import Randomstring from 'randomstring';
 import jwt_decode from 'jwt-decode';
-import app from '../../server';
-import { Product, ProductModel } from '../product';
-import { User, UserModel } from '../user';
+import app from '../../../server';
+import { Product, ProductModel } from '../../product';
+import { User, UserModel } from '../../user';
 
 const request = supertest(app);
 const productStore = new ProductModel();
@@ -18,8 +18,8 @@ const product1: Product = {
   price: 5,
 };
 const product2: Product = {
-  name: 'Coat',
-  price: 15,
+  name: 'Meat',
+  price: 55,
 };
 
 const user_login: User = {

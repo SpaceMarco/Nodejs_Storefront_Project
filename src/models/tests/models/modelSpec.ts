@@ -1,9 +1,9 @@
-import { Product, ProductModel } from '../product';
-import { User, UserModel } from '../user';
-import { Order, OrderModel } from '../order';
+import { Product, ProductModel } from '../../product';
+import { User, UserModel } from '../../user';
+import { Order, OrderModel } from '../../order';
 import Randomstring from 'randomstring';
 
-import client from '../../database';
+import client from '../../../database';
 
 const productStore = new ProductModel();
 const userStore = new UserModel();
@@ -45,6 +45,19 @@ const order_prod: Order_products = {
 };
 
 describe('User Model', () => {
+  beforeAll(async () => {
+    const conn = await client.connect();
+    const sql = `
+    DELETE FROM users;
+    ALTER SEQUENCE users_id_seq RESTART WITH 1;
+    DELETE FROM products;
+    ALTER SEQUENCE products_id_seq RESTART WITH 1;
+    DELETE FROM orders;
+    ALTER SEQUENCE orders_id_seq RESTART WITH 1;
+    `;
+    const result = await conn.query(sql);
+    conn.release();
+  });
   it('create user test', async () => {
     const res = await userStore.create(user_test);
     expect(res.first_name).toEqual(user_test.first_name);
@@ -94,7 +107,6 @@ describe('Order Model', () => {
   });
   it('user orders by user_id test', async () => {
     const res = await orderStore.show('1');
-    expect(res.usrID as string).toBeDefined;
     expect(res.status).toEqual(createdOrder.status);
   });
 
